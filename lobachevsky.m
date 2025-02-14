@@ -18,24 +18,23 @@ function [x1, x2, x3] = lobachevckyMethod(poly, degree_accuracy)
     end
     %просматриваем матрицу квадрирования, чтобы понять какие у корни у
     %нашего уравнения
-    numbers_columns = [];
+    numbers_columns = 0;
     is_complex = 0; 
     for column = 2:3
         for row = 2:(degree_accuracy + 1)
-            if(is_complex == 1)
-                is_complex = 0;
-                break;
-            end
             if(quadr_matrix(row, column) < 0)
-                numbers_columns(end+1) = column - 1;
+                numbers_columns = column;
                 is_complex = 1;
                 break;
             end
         end
+        if(is_complex == 1)
+            break;
+        end
     end
     % вычисляем корни
     m = 2 ^ (degree_accuracy);
-    if(isempty(numbers_columns))
+    if(numbers_columns == 0)%все корни вещественные
         x1 = (abs((quadr_matrix(degree_accuracy + 1, 2))/(quadr_matrix(degree_accuracy + 1, 1)))) ^ (1/m);
         if(abs(subs(poly, x1)) > abs(subs(poly, -x1)))
             x1 = -x1;
@@ -49,19 +48,31 @@ function [x1, x2, x3] = lobachevckyMethod(poly, degree_accuracy)
             x3 = -x3;
         end
     else
-        
+        if(numbers_columns == 2)
+            x3 = (abs((quadr_matrix(degree_accuracy + 1, 4))/(quadr_matrix(degree_accuracy + 1, 3)))) ^ (1/m);
+            if(abs(subs(poly, x3)) > abs(subs(poly, -x3)))
+                x3 = -x3;
+            end
+            r = (abs(quadr_matrix(degree_accuracy + 1, 4) / quadr_matrix(degree_accuracy + 1, 2))) ^ (1 / (2 * m));
+            cosinus = (-(coeffs_vector(2)/coeffs_vector(1)) + (-x3)) / 2 * r;
+            sinus = sqrt(1 - (cosinus * cosinus));
+            x1 = r * cosinus + (r * sinus)*1i;
+            x2 = r * cosinus - (r * sinus)*1i;
+        else
+            x1 = (abs((quadr_matrix(degree_accuracy + 1, 2))/(quadr_matrix(degree_accuracy + 1, 1)))) ^ (1/m);
+            if(abs(subs(poly, x1)) > abs(subs(poly, -x1)))
+                x1 = -x1;
+            end
+            r = (abs(quadr_matrix(degree_accuracy + 1, 4) / quadr_matrix(degree_accuracy + 1, 2))) ^ (1 / (2 * m));
+            tmp = -(quadr_matrix(1, 2)/quadr_matrix(1, 1));
+            tmp2 = tmp - x1;
+            tmp3 = 2 * r;
+            cosinus = tmp2 / tmp3;
+            sinus = sqrt(1 - (cosinus * cosinus));
+            x2 = r * cosinus + (r * sinus)*1i;
+            x3 = r * cosinus - (r * sinus)*1i;
+        end
     end
-    % for k = 1:3
-    %     if(ismember(k, numbers_columns)) % комплексно-сопряженные корни
-    %         r = (quadr_matrix(degree_accuracy, 4)/quadr_matrix(degree_accuracy, 1)) ^ (1/(2 * m));
-    %         %roots(1)
-    %     else % только вещественные корни
-    %         x1 = (abs((quadr_matrix(degree_accuracy, k))/(quadr_matrix(degree_accuracy, k - 1)))) ^ (1/m);
-    %         if(subs(poly, roots(k)) > subs(poly, -roots(k)))
-    %             roots(k) = -roots(k);
-    %         end
-    %     end
-    % end
 end
 
 flag = 1;
@@ -73,7 +84,38 @@ if(flag == 0)
     disp(poly_expr);
 else
     syms x;
-    % poly = 2*x^3 - 3*x^2 - x - 1.5;
-    poly = x^3 + 3*x^2 - x - 1;
-    lobachevckyMethod(poly, 5);
+    poly = 2*x^3 - 3*x^2 - x - 1.5;
+    %poly = x^3 + 2*x^2 + 0 * x + 2;
+    coefs = [2 -3 -1 -1.5];
+    roots_values = roots(coefs);
+    fprintf('Точное решение:\n');
+    disp(roots_values);
+
+    [x1, x2, x3] = lobachevckyMethod(poly, 5);
+    fprintf('Решение методом Лобачевского c числом шагов k=%d:\n', 5);
+    fprintf('x1 = %.7f\n', x1);
+    if(imag(x2) >= 0)
+        fprintf('x2 = %.7f + %.7fi\n', real(x2), imag(x2));
+    else
+        fprintf('x2 = %.7f - %.7fi\n', real(x2), abs(imag(x2)));
+    end
+    if(imag(x3) >= 0)
+        fprintf('x3 = %.7f + %.7fi\n', real(x3), imag(x3));
+    else
+        fprintf('x3 = %.7f - %.7fi\n', real(x3), abs(imag(x3)));
+    end
+
+    [x1, x2, x3] = lobachevckyMethod(poly, 9);
+    fprintf('Решение методом Лобачевского c числом шагов k=%d:\n', 9);
+    fprintf('x1 = %.7f\n', x1);
+    if(imag(x2) >= 0)
+        fprintf('x2 = %.7f + %.7fi\n', real(x2), imag(x2));
+    else
+        fprintf('x2 = %.7f - %.7fi\n', real(x2), abs(imag(x2)));
+    end
+    if(imag(x3) >= 0)
+        fprintf('x3 = %.7f + %.7fi\n', real(x3), imag(x3));
+    else
+        fprintf('x3 = %.7f - %.7fi\n', real(x3), abs(imag(x3)));
+    end
 end
