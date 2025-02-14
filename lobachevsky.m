@@ -85,8 +85,10 @@ if(flag == 0)
 else
     syms x;
     poly = 2*x^3 - 3*x^2 - x - 1.5;
-    %poly = x^3 + 2*x^2 + 0 * x + 2;
     coefs = [2 -3 -1 -1.5];
+
+    % poly = x^3 + 3*x^2 - x - 1;
+    % coefs = [1 3 -1 -1];
     roots_values = roots(coefs);
     fprintf('Точное решение:\n');
     disp(roots_values);
