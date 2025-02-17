@@ -93,19 +93,19 @@ else
     fprintf('Точное решение:\n');
     disp(roots_values);
 
-    [x1, x2, x3] = lobachevckyMethod(poly, 5);
-    fprintf('Решение методом Лобачевского c числом шагов k=%d:\n', 5);
-    fprintf('x1 = %.7f\n', x1);
-    if(imag(x2) >= 0)
-        fprintf('x2 = %.7f + %.7fi\n', real(x2), imag(x2));
-    else
-        fprintf('x2 = %.7f - %.7fi\n', real(x2), abs(imag(x2)));
-    end
-    if(imag(x3) >= 0)
-        fprintf('x3 = %.7f + %.7fi\n', real(x3), imag(x3));
-    else
-        fprintf('x3 = %.7f - %.7fi\n', real(x3), abs(imag(x3)));
-    end
+    % [x1, x2, x3] = lobachevckyMethod(poly, 5);
+    % fprintf('Решение методом Лобачевского c числом шагов k=%d:\n', 5);
+    % fprintf('x1 = %.7f\n', x1);
+    % if(imag(x2) >= 0)
+    %     fprintf('x2 = %.7f + %.7fi\n', real(x2), imag(x2));
+    % else
+    %     fprintf('x2 = %.7f - %.7fi\n', real(x2), abs(imag(x2)));
+    % end
+    % if(imag(x3) >= 0)
+    %     fprintf('x3 = %.7f + %.7fi\n', real(x3), imag(x3));
+    % else
+    %     fprintf('x3 = %.7f - %.7fi\n', real(x3), abs(imag(x3)));
+    % end
 
     [x1, x2, x3] = lobachevckyMethod(poly, 9);
     fprintf('Решение методом Лобачевского c числом шагов k=%d:\n', 9);
@@ -120,4 +120,8 @@ else
     else
         fprintf('x3 = %.7f - %.7fi\n', real(x3), abs(imag(x3)));
     end
+
+    polinom = @(x) 2*x^3 - 3*x^2 - x - 1.5;
+    result_poly = polinom(x3);
+    fprintf('\nresult = %.10f', result_poly);
 end

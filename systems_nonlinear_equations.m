@@ -92,6 +92,9 @@ fprintf('\nx = %.5f\n', result_x);
 fprintf('y = %.5f', result_y);
 fprintf('\nколичество итераций: %d', count_itertion);
 
+res = equ2(result_x, result_y);
+fprintf('\nres = %.10f', res);
+
 x = linspace(0, 1, 10000);
 plot(x, 0.375 - (cos(x)/4), 'r', 'LineWidth', 2);
 hold on;
