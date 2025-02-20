@@ -271,7 +271,7 @@ function [eignvalue, eigenvector] = lambdaMethod(A, lambda1, k)
     yk2 = A ^ k * y0;
     yk3 = A ^ (k + 1) * y0;
 
-    eignvalue = (yk3(1) - lambda1 * yk2(1)) / (yk2(1) - lambda1 * yk1(1));
+    eignvalue = (yk3(3) - lambda1 * yk2(3)) / (yk2(3) - lambda1 * yk1(3));
     vec = yk3 - lambda1 * yk2;
     eigenvector = vec / vec(n);
 end
