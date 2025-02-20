@@ -253,7 +253,27 @@ function [values, vectors] = rotationMethod(A, epsilon)
 end
 
 function [eigenvalue, eigenvector] = powerMethod(A, k)
+    n = size(A, 1);
+    y0 = rand(n, 1);
     
+    yk1 = A ^ k * y0;
+    yk2 = A ^ (k + 1) * y0;
+    eigenvalue = sum(yk2 .* yk1) / sum(yk1 .* yk1);
+    
+    eigenvector = yk1 / yk1(n);
+end
+
+function [eignvalue, eigenvector] = lambdaMethod(A, lambda1, k)
+    n = size(A, 1);
+    y0 = rand(n, 1);
+
+    yk1 = A ^ (k-1) * y0;
+    yk2 = A ^ k * y0;
+    yk3 = A ^ (k + 1) * y0;
+
+    eignvalue = (yk3(1) - lambda1 * yk2(1)) / (yk2(1) - lambda1 * yk1(1));
+    vec = yk3 - lambda1 * yk2;
+    eigenvector = vec / vec(n);
 end
 
 A = [  1.21   0.45   -0.17   -0.12;
@@ -280,6 +300,7 @@ disp('Проверка собственных векторов Ax - lambda*x = 0
 for i = 1:length(residual)
     fprintf('Вектор номер %d: %.15f\n', i, residual(i));
 end
+disp('===================================================================================');
 
 [lambda, V] = fadeevMethod(A);
 disp('Собственные значения, найденные с помощью метода Фадеева:');
@@ -294,6 +315,7 @@ disp('Проверка собственных векторов Ax - lambda*x = 0
 for i = 1:length(residual)
     fprintf('Вектор номер %d: %.15f\n', i, residual(i));
 end
+disp('===================================================================================');
 
 [lambda, V] = krylov(A);
 disp('Собственные значения, найденные с помощью метода Крылова:');
@@ -308,6 +330,7 @@ disp('Проверка собственных векторов Ax - lambda*x = 0
 for i = 1:length(residual)
     fprintf('Вектор номер %d: %.15f\n', i, residual(i));
 end
+disp('===================================================================================');
 
 [lambda, V] = leverier(A);
 disp('Собственные значения, найденные с помощью метода Леверрье:');
@@ -322,6 +345,7 @@ disp('Проверка собственных векторов Ax - lambda*x = 0
 for i = 1:length(residual)
     fprintf('Вектор номер %d: %.15f\n', i, residual(i));
 end
+disp('===================================================================================');
 
 [lambda, V] = rotationMethod(A, 1e-12);
 disp('Собственные значения, найденные с помощью метода вращений:');
@@ -336,3 +360,24 @@ disp('Проверка собственных векторов Ax - lambda*x = 0
 for i = 1:length(residual)
     fprintf('Вектор номер %d: %.15f\n', i, residual(i));
 end
+disp('===================================================================================');
+
+[lambda, V] = powerMethod(A, 100);
+disp('Максимальное собственное значение, найденное с помощью степенного метода:');
+disp(lambda);
+disp('Собственный вектор, найденный с помощью степенного метода:');
+disp(V);
+res = A * V - lambda * V;
+disp('Проверка собственного вектора Ax - lambda*x = 0:');
+fprintf('%.15f\n', res);
+disp('===================================================================================');
+
+[lambda, V] = lambdaMethod(A, lambda, 60);
+disp('Второе по модулю собственное значение, найденное с помощью метода лямбда разности:');
+disp(lambda);
+disp('Собственный вектор, найденный с помощью метода лямбда разности:');
+disp(V);
+res = A * V - lambda * V;
+disp('Проверка собственнго вектора Ax - lambda*x = 0:');
+fprintf('%.15f\n', res);
+disp('===================================================================================');
